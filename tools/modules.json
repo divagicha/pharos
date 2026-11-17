@@ -1,0 +1,33 @@
+{
+  "modules": {
+    "body": ["enable.wgsl", "common.wgsl", "body.wgsl", "cut.wgsl", "surf_flat.wgsl", "surf_rock.wgsl", "clouds.wgsl", "surf_terra.wgsl", "surf_giant.wgsl", "surf_star.wgsl", "solid.wgsl@flat", "solid.wgsl@rock", "solid.wgsl@terra", "solid.wgsl@giant", "solid.wgsl@star", "atmo.wgsl", "ring.wgsl", "corona.wgsl"],
+    "sky": ["common.wgsl", "sky.wgsl", "nebula.wgsl"],
+    "post": ["common.wgsl", "post.wgsl"],
+    "field": ["common.wgsl", "field.wgsl"],
+    "bake": ["common.wgsl", "bake.wgsl"]
+  },
+  "pipelines": [
+    {"name": "bakeV", "module": "bake", "vs": "vs_bake", "fs": "fs_bakeV", "groups": [], "target": "r16float"},
+    {"name": "bakeG", "module": "bake", "vs": "vs_bake", "fs": "fs_bakeG", "groups": [], "target": "rgba16float"},
+    {"name": "sky", "module": "sky", "vs": "vs_full", "fs": "fs_sky", "groups": ["globals", "sky"], "depth": "always", "msaa": true},
+    {"name": "stars", "module": "sky", "vs": "vs_pts", "fs": "fs_pts", "groups": ["globals"], "depth": "always", "blend": "add", "msaa": true, "buffers": [{"arrayStride": 32, "stepMode": "instance", "attributes": [{"shaderLocation": 0, "offset": 0, "format": "float32x4"},{"shaderLocation": 1, "offset": 16, "format": "float32x4"}]}]},
+    {"name": "nebula", "module": "sky", "vs": "vs_full", "fs": "fs_nebula", "groups": ["globals"]},
+    {"name": "solid_flat", "module": "body", "vs": "vs_body", "fs": "fs_flat", "groups": ["globals", "body"], "depth": "write", "blend": "premul", "msaa": true},
+    {"name": "solid_rock", "module": "body", "vs": "vs_body", "fs": "fs_rock", "groups": ["globals", "body"], "depth": "write", "blend": "premul", "msaa": true},
+    {"name": "solid_terra", "module": "body", "vs": "vs_body", "fs": "fs_terra", "groups": ["globals", "body"], "depth": "write", "blend": "premul", "msaa": true},
+    {"name": "solid_giant", "module": "body", "vs": "vs_body", "fs": "fs_giant", "groups": ["globals", "body"], "depth": "write", "blend": "premul", "msaa": true},
+    {"name": "solid_star", "module": "body", "vs": "vs_body", "fs": "fs_star", "groups": ["globals", "body"], "depth": "write", "blend": "premul", "msaa": true},
+    {"name": "clouds", "module": "body", "vs": "vs_body", "fs": "fs_clouds", "groups": ["globals", "body"], "depth": "test", "blend": "premul", "msaa": true},
+    {"name": "atmo", "module": "body", "vs": "vs_body", "fs": "fs_atmo", "groups": ["globals", "body"], "depth": "test", "blend": "dsb", "msaa": true},
+    {"name": "ring", "module": "body", "vs": "vs_ring", "fs": "fs_ring", "groups": ["globals", "body"], "depth": "test", "blend": "premul", "msaa": true},
+    {"name": "corona", "module": "body", "vs": "vs_body", "fs": "fs_corona", "groups": ["globals", "body", "loops"], "depth": "test", "blend": "premul", "msaa": true},
+    {"name": "rocks", "module": "field", "vs": "vs_rock", "fs": "fs_rock", "groups": ["globals", "zone"], "depth": "write", "msaa": true, "topology": "triangle-list", "buffers": [{"arrayStride": 12, "attributes": [{"shaderLocation": 0, "offset": 0, "format": "float32x3"}]},{"arrayStride": 32, "stepMode": "instance", "attributes": [{"shaderLocation": 1, "offset": 0, "format": "float32x4"},{"shaderLocation": 2, "offset": 16, "format": "float32x4"}]}]},
+    {"name": "rocks_far", "module": "field", "vs": "vs_rockfar", "fs": "fs_rockfar", "groups": ["globals", "zone"], "depth": "test", "blend": "add", "msaa": true, "buffers": [{"arrayStride": 32, "stepMode": "instance", "attributes": [{"shaderLocation": 1, "offset": 0, "format": "float32x4"},{"shaderLocation": 2, "offset": 16, "format": "float32x4"}]}]},
+    {"name": "dustA", "module": "field", "vs": "vs_dustA", "fs": "fs_dust", "groups": ["globals", "zone"], "depth": "test", "blend": "add", "msaa": true, "buffers": [{"arrayStride": 16, "stepMode": "instance", "attributes": [{"shaderLocation": 0, "offset": 0, "format": "float32x4"}]}]},
+    {"name": "dustB", "module": "field", "vs": "vs_dustB", "fs": "fs_dust", "groups": ["globals", "zone"], "depth": "test", "blend": "add", "msaa": true, "buffers": [{"arrayStride": 16, "stepMode": "instance", "attributes": [{"shaderLocation": 0, "offset": 0, "format": "float32x4"}]}]},
+    {"name": "down0", "module": "post", "vs": "vs_post", "fs": "fs_down0", "groups": ["globals", "post"]},
+    {"name": "down", "module": "post", "vs": "vs_post", "fs": "fs_down", "groups": ["globals", "post"]},
+    {"name": "up", "module": "post", "vs": "vs_post", "fs": "fs_up", "groups": ["globals", "post"], "blend": "add"},
+    {"name": "comp", "module": "post", "vs": "vs_post", "fs": "fs_comp", "groups": ["globals", "post"], "target": "canvas"}
+  ]
+}

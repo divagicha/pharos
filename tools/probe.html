@@ -1,0 +1,33 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>WebGPU probe</title>
+<style>
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 2rem; max-width: 60rem; }
+  pre { background: #f3f3f3; padding: 1rem; overflow: auto; }
+  .ok { color: #0a6b2d; } .no { color: #a11111; }
+  @media (prefers-color-scheme: dark) { body { background: #111; color: #ddd; } pre { background: #1c1c1c; } .ok { color: #5fd38a; } .no { color: #ff7b7b; } }
+</style>
+<h1>WebGPU probe</h1>
+<p>Open this file in the browser you will test with. It reports what the renderer can rely on.</p>
+<div id="out">Checking…</div>
+<script>
+(async () => {
+  const el = document.getElementById('out');
+  const row = (label, ok, detail) => `<div><b class="${ok ? 'ok' : 'no'}">${ok ? 'yes' : 'no'}</b> ${label}${detail ? ' (' + detail + ')' : ''}</div>`;
+  if (!navigator.gpu) { el.textContent = 'navigator.gpu is missing: this browser or context has no WebGPU.'; return; }
+  const ad = await navigator.gpu.requestAdapter({ powerPreference: 'high-performance' });
+  if (!ad) { el.textContent = 'No WebGPU adapter was returned.'; return; }
+  const i = ad.info || {};
+  const f = n => ad.features.has(n);
+  let h = `<h2>Adapter</h2><pre>${JSON.stringify({ vendor: i.vendor, architecture: i.architecture, device: i.device, description: i.description, isFallbackAdapter: i.isFallbackAdapter }, null, 2)}</pre>`;
+  h += '<h2>Features the design cares about</h2>';
+  h += row('timestamp-query', f('timestamp-query'), 'needed for the GPU frame-time gate');
+  h += row('dual-source-blending', f('dual-source-blending'), 'optional: coloured extinction through atmosphere limbs');
+  h += row('rg11b10ufloat-renderable', f('rg11b10ufloat-renderable'), 'optional: cheaper bloom chain');
+  h += row('float32-filterable', f('float32-filterable'), 'not required');
+  h += `<h2>Other</h2><pre>${JSON.stringify({ preferredCanvasFormat: navigator.gpu.getPreferredCanvasFormat(), maxTextureDimension2D: ad.limits.maxTextureDimension2D, maxUniformBufferBindingSize: ad.limits.maxUniformBufferBindingSize, minUniformBufferOffsetAlignment: ad.limits.minUniformBufferOffsetAlignment, maxColorAttachmentBytesPerSample: ad.limits.maxColorAttachmentBytesPerSample, devicePixelRatio, userAgent: navigator.userAgent }, null, 2)}</pre>`;
+  h += `<h2>All features</h2><pre>${[...ad.features].sort().join('\n')}</pre>`;
+  el.innerHTML = h;
+  window.__probe = { info: { vendor: i.vendor, architecture: i.architecture, device: i.device, description: i.description }, features: [...ad.features] };
+})();
+</script>

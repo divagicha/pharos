@@ -1,0 +1,26 @@
+{
+  "name": "pharos",
+  "private": true,
+  "type": "module",
+  "description": "A star system to fly through in the browser: a WebGPU space simulation in one self-contained index.html, with no dependencies",
+  "homepage": "https://divagicha.github.io/pharos/",
+  "license": "MIT",
+  "repository": "github:divagicha/pharos",
+  "scripts": {
+    "check": "node tools/wgsl-check.mjs",
+    "check:min": "node tools/wgsl-check.mjs --min",
+    "derive": "node tools/derive.mjs",
+    "build": "node tools/build.mjs",
+    "build:dev": "node tools/build.mjs --dev",
+    "shot": "node tools/shot.mjs",
+    "probe": "node tools/probe.mjs",
+    "test": "node --test \"test/*.test.mjs\"",
+    "capture": "node tools/capture.mjs",
+    "perf": "node tools/perf.mjs",
+    "drive": "node tools/drive.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "playwright": "^1.65.1"
+  }
+}

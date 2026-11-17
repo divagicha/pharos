@@ -1,0 +1,2 @@
+# The built single file stays byte for byte as the build wrote it (no line-ending conversion).
+index.html -text

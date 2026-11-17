@@ -1,0 +1,203 @@
+{
+  "note": "Base parameters only. Derive period, gravity, density, escape velocity, luminosity, equilibrium temperature and distances in code (see tools/derive.mjs) so the HUD can never contradict the simulation. The system is fictional. Interior layers are modelled on solar-system and textbook analogues. They are checked for self-consistency, not against a structure model: the density each layer implies (its mass share over its share of the volume) is plausible for the named material and decreases outward (npm run derive prints it; test/telemetry.test.mjs enforces the ordering).",
+  "constants": {
+    "G_km3_kg_s2": 6.6743e-20,
+    "Msun_kg": 1.98847e30, "Rsun_km": 695700, "Tsun_K": 5772,
+    "Mearth_kg": 5.9722e24, "Rearth_km": 6371.0,
+    "Mjup_kg": 1.89813e27, "Rjup_km": 69911,
+    "AU_km": 149597870.7, "LY_km": 9460730472580.8
+  },
+  "systems": [
+    { "id": "pharos", "posLy": [0, 0, 0] },
+    { "id": "cinnabar", "posLy": [2.34, 0.78, -3.00] },
+    { "id": "caerulea", "posLy": [-22.4, 32.0, -50.56] },
+    { "id": "dioscuri", "posLy": [-7.98, 3.99, 7.07], "binary": { "a": "dioscuri-a", "b": "dioscuri-b", "separationAU": 0.085, "e": 0.0 } },
+    { "id": "metronome", "posLy": [2.73, -20.48, 17.75] }
+  ],
+  "belt": { "name": "The Shoals", "parent": "pharos", "majorAU": 2.6, "minorAU": 0.25 },
+  "rings": [{ "name": "The Veil", "parent": "nivalis", "innerRadii": 1.45, "outerRadii": 2.55 }],
+  "bodies": [
+    { "id": "pharos", "name": "Pharos", "kind": "star", "system": "pharos", "key": 1,
+      "spectral": "G1 V", "massSun": 1.04, "radiusSun": 1.06, "teffK": 5860, "ageGyr": 3.9, "feH": 0.06, "rotationDays": 22,
+      "stage": "Main sequence, roughly 40% of the way through core hydrogen burning",
+      "composition": { "basis": "photosphere, by mass", "parts": [["H", 72.6], ["He", 25.7], ["O, C, Ne, Fe and other metals", 1.7]] },
+      "layers": [
+        { "name": "Core", "outer": 0.25, "massPct": 48, "material": "Hydrogen fusing to helium at about 15 million K" },
+        { "name": "Radiative zone", "outer": 0.71, "massPct": 50, "material": "Dense ionised hydrogen and helium; energy takes roughly 100,000 years to cross" },
+        { "name": "Convective zone", "outer": 1.0, "massPct": 2, "material": "Boiling plasma; surface granules are the tops of these cells" }
+      ] },
+
+    { "id": "ignis", "name": "Ignis", "kind": "rock", "variant": "lava", "system": "pharos", "parent": "pharos", "key": 2,
+      "blurb": "Cratered volcanic world, first planet of Pharos",
+      "orbit": { "aAU": 0.34, "e": 0.02, "incDeg": 2.1, "phaseDeg": 200 },
+      "massEarth": 0.42, "radiusEarth": 0.78, "albedo": 0.10, "spinOrbit": [3, 2], "tiltDeg": 2,
+      "atmosphere": { "surfacePressureBar": 0.004, "gases": [["SO2", 61], ["CO2", 27], ["S2", 6], ["CO", 4], ["N2 + Ar", 2]],
+        "tempK": { "min": 190, "mean": 520, "max": 690, "note": "open lava reaches about 1,450 K" } },
+      "layers": [
+        { "name": "Core", "outer": 0.58, "massPct": 36, "material": "Iron-nickel with sulfur, partly molten" },
+        { "name": "Mantle", "outer": 0.99, "massPct": 62.5, "material": "Silicates, partially molten by tidal heating" },
+        { "name": "Crust", "outer": 1.0, "massPct": 1.5, "material": "Basalt, fractured by rising magma" }
+      ] },
+
+    { "id": "pelagia", "name": "Pelagia", "kind": "terra", "system": "pharos", "parent": "pharos", "key": 3,
+      "blurb": "Ocean world with continents and weather, second planet of Pharos",
+      "orbit": { "aAU": 1.08, "e": 0.012, "incDeg": 0.0, "phaseDeg": 35 },
+      "massEarth": 1.12, "radiusEarth": 1.03, "albedo": 0.31, "rotationHours": 26.2, "tiltDeg": 21,
+      "atmosphere": { "surfacePressureBar": 1.08, "gases": [["N2", 76.4], ["O2", 21.8], ["Ar", 1.1], ["H2O", 0.6], ["CO2", 0.05], ["trace", 0.05]],
+        "tempK": { "min": 208, "mean": 289, "max": 318 } },
+      "layers": [
+        { "name": "Inner core", "outer": 0.19, "massPct": 1.6, "material": "Solid iron-nickel" },
+        { "name": "Outer core", "outer": 0.545, "massPct": 30.8, "material": "Liquid iron-nickel with sulfur; drives the magnetic field" },
+        { "name": "Mantle", "outer": 0.9965, "massPct": 67.1, "material": "Silicates: peridotite above, bridgmanite below" },
+        { "name": "Crust", "outer": 1.0, "massPct": 0.5, "material": "Granite continents, basalt sea floor" }
+      ] },
+    { "id": "luma", "name": "Luma", "kind": "rock", "variant": "moon", "system": "pharos", "parent": "pelagia",
+      "blurb": "Cratered moon of Pelagia",
+      "orbit": { "aKm": 310000, "e": 0.03, "incDeg": 4.8, "phaseDeg": 80 },
+      "massEarth": 0.0085, "radiusKm": 1480, "albedo": 0.13, "tidallyLocked": true,
+      "layers": [
+        { "name": "Core", "outer": 0.28, "massPct": 4.5, "material": "Small iron-rich core" },
+        { "name": "Mantle", "outer": 0.97, "massPct": 89.5, "material": "Silicates" },
+        { "name": "Crust", "outer": 1.0, "massPct": 6, "material": "Anorthosite highlands, basalt plains, regolith" }
+      ] },
+
+    { "id": "boreas", "name": "Boreas", "kind": "gas", "system": "pharos", "parent": "pharos", "key": 4,
+      "blurb": "Banded gas giant with long-lived storms, third planet of Pharos",
+      "orbit": { "aAU": 4.6, "e": 0.04, "incDeg": 0.9, "phaseDeg": 300 },
+      "massJup": 1.35, "radiusJup": 1.02, "albedo": 0.50, "rotationHours": 10.4, "tiltDeg": 4,
+      "atmosphere": { "surfacePressureBar": 1.0, "pressureNote": "reference level; there is no surface",
+        "gases": [["H2", 88.6], ["He", 11.0], ["CH4", 0.25], ["H2O", 0.05], ["NH3", 0.03], ["trace", 0.07]],
+        "tempK": { "min": 112, "mean": 138, "max": 165, "note": "cloud tops to the 1-bar level" } },
+      "layers": [
+        { "name": "Core", "outer": 0.15, "massPct": 4, "material": "Rock and ice under tens of millions of bar" },
+        { "name": "Metallic hydrogen", "outer": 0.80, "massPct": 74, "material": "Liquid metallic hydrogen with dissolved helium" },
+        { "name": "Molecular envelope", "outer": 1.0, "massPct": 22, "material": "Hydrogen and helium gas grading into liquid" }
+      ] },
+    { "id": "pyre", "name": "Pyre", "kind": "rock", "variant": "sulfur", "system": "pharos", "parent": "boreas",
+      "blurb": "Volcanic sulfur moon of Boreas",
+      "orbit": { "aKm": 400000, "e": 0.004, "incDeg": 0.1, "phaseDeg": 10 },
+      "massKg": 8.6e22, "radiusKm": 1790, "albedo": 0.60, "tidallyLocked": true,
+      "layers": [
+        { "name": "Core", "outer": 0.45, "massPct": 18, "material": "Iron and iron sulfide" },
+        { "name": "Mantle", "outer": 0.98, "massPct": 77.5, "material": "Silicates, partly molten by tidal flexing" },
+        { "name": "Crust", "outer": 1.0, "massPct": 4.5, "material": "Silicate lithosphere coated in sulfur and sulfur dioxide frost" }
+      ] },
+    { "id": "rime", "name": "Rime", "kind": "rock", "variant": "ice", "system": "pharos", "parent": "boreas",
+      "blurb": "Ice-shell moon of Boreas with a buried ocean",
+      "orbit": { "aKm": 640000, "e": 0.009, "incDeg": 0.5, "phaseDeg": 150 },
+      "massKg": 4.6e22, "radiusKm": 1520, "albedo": 0.65, "tidallyLocked": true,
+      "layers": [
+        { "name": "Core", "outer": 0.36, "massPct": 9, "material": "Iron and iron sulfide" },
+        { "name": "Rocky mantle", "outer": 0.92, "massPct": 83.6, "material": "Silicate rock" },
+        { "name": "Ocean", "outer": 0.985, "massPct": 6.1, "material": "Salty liquid water, about 100 km deep" },
+        { "name": "Ice shell", "outer": 1.0, "massPct": 1.3, "material": "Water ice, fractured by tides" }
+      ] },
+    { "id": "slate", "name": "Slate", "kind": "rock", "variant": "moon", "system": "pharos", "parent": "boreas",
+      "blurb": "Dark, heavily cratered moon of Boreas",
+      "orbit": { "aKm": 1150000, "e": 0.007, "incDeg": 0.3, "phaseDeg": 250 },
+      "massKg": 1.0e23, "radiusKm": 2350, "albedo": 0.20, "tidallyLocked": true,
+      "layers": [
+        { "name": "Rock-rich core", "outer": 0.55, "massPct": 27, "material": "Rock and metal, only partly separated from ice" },
+        { "name": "Ice-rock mantle", "outer": 0.96, "massPct": 66.7, "material": "Mixed water ice and rock" },
+        { "name": "Crust", "outer": 1.0, "massPct": 6.3, "material": "Dirty water ice, saturated with craters" }
+      ] },
+
+    { "id": "nivalis", "name": "Nivalis", "kind": "ice", "system": "pharos", "parent": "pharos", "key": 5,
+      "blurb": "Ringed ice giant, fourth planet of Pharos",
+      "orbit": { "aAU": 11.8, "e": 0.03, "incDeg": 1.6, "phaseDeg": 120 },
+      "massEarth": 17.4, "radiusEarth": 3.92, "albedo": 0.30, "rotationHours": 16.6, "tiltDeg": 28,
+      "atmosphere": { "surfacePressureBar": 1.0, "pressureNote": "reference level; there is no surface",
+        "gases": [["H2", 80.2], ["He", 17.6], ["CH4", 2.1], ["trace", 0.1]],
+        "tempK": { "min": 51, "mean": 64, "max": 76, "note": "tropopause to the 1-bar level" } },
+      "layers": [
+        { "name": "Core", "outer": 0.27, "massPct": 13, "material": "Rock and iron" },
+        { "name": "Icy mantle", "outer": 0.80, "massPct": 78, "material": "Hot, dense water-ammonia-methane fluid, partly superionic" },
+        { "name": "Gas envelope", "outer": 1.0, "massPct": 9, "material": "Hydrogen, helium and methane" }
+      ] },
+    { "id": "firn", "name": "Firn", "kind": "rock", "variant": "ice", "system": "pharos", "parent": "nivalis",
+      "blurb": "Bright icy moon just outside the rings of Nivalis",
+      "orbit": { "aKm": 102000, "e": 0.002, "incDeg": 0.2, "phaseDeg": 40 },
+      "massKg": 2.9e21, "radiusKm": 760, "albedo": 0.75, "tidallyLocked": true,
+      "layers": [
+        { "name": "Rocky core", "outer": 0.65, "massPct": 56.4, "material": "Hydrated silicate rock" },
+        { "name": "Ice mantle", "outer": 1.0, "massPct": 43.6, "material": "Water ice" }
+      ] },
+    { "id": "neve", "name": "Neve", "kind": "rock", "variant": "ice", "system": "pharos", "parent": "nivalis",
+      "blurb": "Small icy moon of Nivalis",
+      "orbit": { "aKm": 170000, "e": 0.004, "incDeg": 1.1, "phaseDeg": 190 },
+      "massKg": 1.29e21, "radiusKm": 590, "albedo": 0.55, "tidallyLocked": true,
+      "layers": [
+        { "name": "Rocky core", "outer": 0.62, "massPct": 51.8, "material": "Silicate rock" },
+        { "name": "Ice mantle", "outer": 1.0, "massPct": 48.2, "material": "Water ice with ammonia hydrates" }
+      ] },
+    { "id": "serac", "name": "Serac", "kind": "rock", "variant": "ice", "system": "pharos", "parent": "nivalis",
+      "blurb": "Captured moon of Nivalis on a tilted, backwards orbit",
+      "orbit": { "aKm": 310000, "e": 0.02, "incDeg": 157, "phaseDeg": 300 },
+      "massKg": 1.93e22, "radiusKm": 1320, "albedo": 0.45,
+      "layers": [
+        { "name": "Core", "outer": 0.72, "massPct": 67.2, "material": "Rock and metal" },
+        { "name": "Ice mantle", "outer": 0.985, "massPct": 30.7, "material": "Water ice, possibly with a thin ocean at its base" },
+        { "name": "Crust", "outer": 1.0, "massPct": 2.1, "material": "Nitrogen and methane ices" }
+      ] },
+
+    { "id": "wayfarer", "name": "Wayfarer", "kind": "comet", "system": "pharos", "parent": "pharos",
+      "blurb": "Long-period comet a few weeks past its closest approach to Pharos",
+      "orbit": { "qAU": 0.7, "e": 0.94, "incDeg": 31, "periDaysBeforeEpoch": 24 },
+      "radiusKm": 4.2, "albedo": 0.04,
+      "composition": { "basis": "nucleus, by mass", "parts": [["H2O ice", 48], ["dust and organics", 40], ["CO2 ice", 8], ["CO ice", 4]] },
+      "layers": [
+        { "name": "Interior", "outer": 0.92, "massPct": 93, "material": "Porous mix of ices and dust, more empty space than solid" },
+        { "name": "Dust mantle", "outer": 1.0, "massPct": 7, "material": "Dark crust of dust and organics left behind as ice boils away" }
+      ] },
+
+    { "id": "cinnabar", "name": "Cinnabar", "kind": "star", "system": "cinnabar", "key": 6,
+      "spectral": "M4.5 Ve", "massSun": 0.16, "radiusSun": 0.19, "teffK": 3150, "ageGyr": 6.1, "feH": -0.12, "rotationDays": 4.3,
+      "stage": "Main-sequence flare star; fully convective, will burn for trillions of years",
+      "composition": { "basis": "photosphere, by mass", "parts": [["H", 74.1], ["He", 24.8], ["metals", 1.1]] },
+      "layers": [
+        { "name": "Fusion core", "outer": 0.3, "massPct": 13, "material": "Slow hydrogen fusion" },
+        { "name": "Convective interior", "outer": 1.0, "massPct": 87, "material": "Plasma mixed from core to surface; no radiative zone" }
+      ] },
+
+    { "id": "caerulea", "name": "Caerulea", "kind": "star", "system": "caerulea", "key": 7,
+      "spectral": "B1 Ia", "massSun": 23, "radiusSun": 34, "teffK": 21500, "ageMyr": 8, "feH": 0.02, "rotationDays": 31,
+      "stage": "Blue supergiant; core hydrogen exhausted, will end as a core-collapse supernova",
+      "composition": { "basis": "photosphere, by mass", "parts": [["H", 70.5], ["He", 27.9], ["metals", 1.6]] },
+      "layers": [
+        { "name": "Helium core", "outer": 0.04, "massPct": 36, "material": "Helium-rich core, contracting and heating; hydrogen burns in a shell around it" },
+        { "name": "Radiative envelope", "outer": 0.97, "massPct": 63.95, "material": "Hot, tenuous hydrogen and helium" },
+        { "name": "Wind base", "outer": 1.0, "massPct": 0.05, "material": "Radiation-driven outflow of roughly a millionth of a solar mass per year" }
+      ] },
+
+    { "id": "dioscuri-a", "name": "Dioscuri A", "kind": "star", "system": "dioscuri", "key": 8,
+      "spectral": "F8 V", "massSun": 1.21, "radiusSun": 1.28, "teffK": 6180, "ageGyr": 2.7, "feH": -0.04, "rotationDays": 6.4,
+      "stage": "Main sequence; close binary with Dioscuri B",
+      "composition": { "basis": "photosphere, by mass", "parts": [["H", 73.4], ["He", 25.2], ["metals", 1.4]] },
+      "layers": [
+        { "name": "Core", "outer": 0.2, "massPct": 45, "material": "Hydrogen fusion, partly by the CNO cycle" },
+        { "name": "Radiative zone", "outer": 0.82, "massPct": 54.7, "material": "Ionised hydrogen and helium" },
+        { "name": "Convective zone", "outer": 1.0, "massPct": 0.3, "material": "Thin boiling layer" }
+      ] },
+    { "id": "dioscuri-b", "name": "Dioscuri B", "kind": "star", "system": "dioscuri",
+      "spectral": "K2 V", "massSun": 0.80, "radiusSun": 0.77, "teffK": 4950, "ageGyr": 2.7, "feH": -0.04, "rotationDays": 6.4,
+      "stage": "Main sequence; close binary with Dioscuri A",
+      "composition": { "basis": "photosphere, by mass", "parts": [["H", 73.4], ["He", 25.2], ["metals", 1.4]] },
+      "layers": [
+        { "name": "Core", "outer": 0.25, "massPct": 45, "material": "Hydrogen fusion by the proton-proton chain" },
+        { "name": "Radiative zone", "outer": 0.66, "massPct": 48, "material": "Ionised hydrogen and helium" },
+        { "name": "Convective zone", "outer": 1.0, "massPct": 7, "material": "Deep boiling envelope; strong starspots" }
+      ] },
+
+    { "id": "metronome", "name": "Metronome", "kind": "star", "variant": "neutron", "system": "metronome", "key": 9,
+      "spectral": "Pulsar (neutron star)", "massSun": 1.41, "radiusKm": 11.6, "teffK": 720000, "ageMyr": 3.2,
+      "spinSeconds": 1.337, "magneticFieldTesla": 2.1e8,
+      "stage": "Remnant of a core-collapse supernova; cooling and spinning down",
+      "composition": { "basis": "whole star, by mass", "parts": [["neutrons", 90], ["protons and electrons", 9], ["iron-group nuclei (crust)", 1]] },
+      "layers": [
+        { "name": "Inner core", "outer": 0.45, "massPct": 17, "material": "Unknown: possibly hyperons or deconfined quarks" },
+        { "name": "Outer core", "outer": 0.90, "massPct": 81, "material": "Superfluid neutrons with superconducting protons" },
+        { "name": "Inner crust", "outer": 0.97, "massPct": 1.999, "material": "Neutron-rich nuclei in a neutron superfluid" },
+        { "name": "Outer crust", "outer": 1.0, "massPct": 0.001, "material": "Lattice of iron-group nuclei in an electron sea" }
+      ] }
+  ]
+}
